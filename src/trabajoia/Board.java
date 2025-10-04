@@ -6,6 +6,7 @@ package trabajoia;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  *
@@ -13,11 +14,21 @@ import java.util.Arrays;
  */
 
 public final class Board {
+
+    public Board(int[][] matrix, int[][] finalState, ArrayList<int[][]> visitedStateListPointer) {
+        this.matrix = matrix;
+        this.finalState = finalState;
+        this.visitedStateListPointer = visitedStateListPointer;
+        this.emptySpaceCoordinates = new int[2];
+        this.findEmptySpaceCoordinates();        
+    }
+    
+    
     public Board(int[][] matrix, ArrayList<int[][]> visitedStateListPointer) {
         this.visitedStateListPointer = visitedStateListPointer;
         this.matrix = matrix;
         this.finalState = new int[matrix.length][matrix[0].length];
-        this.generateFinalState(this.createNumberListFromMatrix());
+        this.generateFinalState(this.createShuffledNumberListFromMatrix());
         this.emptySpaceCoordinates = new int[2];
         this.findEmptySpaceCoordinates();
     }
@@ -122,8 +133,19 @@ public final class Board {
         }
     }
     
+    public final Integer[] createShuffledNumberListFromMatrix() {
+        ArrayList<Integer> numberList = new ArrayList<>();
+        for (int[] matrix1 : matrix) {
+            for (int matrix2 : matrix1) {
+                numberList.add((Integer)matrix2);
+            }
+        }
+        
+        Collections.shuffle(numberList);
+        return numberList.toArray(Integer[]::new);
+    }  
     
-    public final Integer[] createNumberListFromMatrix() {
+    /* public final Integer[] createNumberListFromMatrix() {
         ArrayList<Integer> numberList = new ArrayList<>();
         for (int[] matrix1 : matrix) {
             for (int matrix2 : matrix1) {
@@ -136,13 +158,14 @@ public final class Board {
         });
         numberList.addLast(numberList.removeFirst());
         return numberList.toArray(Integer[]::new);
-    }
+    }*/
+    
     
     public boolean isFinalState(int[][] matrix) {
         return compareMatrices(matrix, finalState);
     }
     
-    public void createBranch() {
+    public void profundidadIterativa() {
         if (isStateVisited(matrix)) {
             return;
         }
@@ -153,7 +176,7 @@ public final class Board {
                 b.printMatrix(matrix);
                 System.out.println("\n");
                 try {
-                    b.createBranch();
+                    b.profundidadIterativa();
                 } catch (StackOverflowError e) {
                     return;
                 }

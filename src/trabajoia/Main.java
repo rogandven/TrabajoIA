@@ -17,20 +17,21 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        int[][] matrix = new int[3][3];
+        int[][] matrix = new int[2][2];
+        int[][] finalState = new int[2][2];
         ArrayList<int[][]> visitedStates = new ArrayList<>();
         matrix[0][0] = 1;
         matrix[0][1] = 2;
-        matrix[0][2] = 3;
         matrix[1][0] = 4;
-        matrix[1][1] = 5;
-        matrix[1][2] = 6;
-        matrix[2][0] = 7;
-        matrix[2][1] = 8;
-        matrix[2][2] = 0; 
+        matrix[1][1] = 0;
         
-        Board b = new Board(matrix, visitedStates);
-        b.createBranch();
+        finalState[0][0] = 4;
+        finalState[0][1] = 2;
+        finalState[1][0] = 1;
+        finalState[1][1] = 0;
+        
+        Board b = new Board(matrix, finalState, visitedStates);
+        b.profundidadIterativa();
     }
     
 }
