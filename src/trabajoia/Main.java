@@ -5,6 +5,7 @@
 package trabajoia;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  *
@@ -16,56 +17,58 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        int[][] matrix = new int[3][3];
-        int[][] finalState = new int[3][3];
-        matrix[0][0] = 0;
-        matrix[0][1] = 1;
-        matrix[0][2] = 1;
-        matrix[1][0] = 1;
-        matrix[1][1] = 1;
-        matrix[1][2] = 1;
-        matrix[2][0] = 1;
-        matrix[2][1] = 1;
-        matrix[2][2] = 1;        
+        ArrayList<String> validRoutes;
+        MatrixTree matrixtree;
+        Scanner s = new Scanner(System.in);
+        int[][] initialState;
+        int[][] finalState;
+        int size;
+        int option;
+        String bestRoute;
         
-        finalState[0][0] = 1;
-        finalState[0][1] = 1;
-        finalState[0][2] = 1;
-        finalState[1][0] = 1;
-        finalState[1][1] = 1;
-        finalState[1][2] = 1;
-        finalState[2][0] = 1;
-        finalState[2][1] = 1;
-        finalState[2][2] = 0;   
-        
-        Board b = new Board(matrix, finalState);
-        ArrayList<String> rutasGanadoras = new ArrayList<>();
-        b.Amplitud(rutasGanadoras);
-        String bestRoute = Board.getBestRoute(rutasGanadoras);
-        if (bestRoute == null) {
-            System.out.println("No hay solución");
-        } else {
-            System.out.println("Mejor camino: " + bestRoute);
+        while (true) {
+            option = -1;
+            bestRoute = null;
+            validRoutes = new ArrayList<>();
+            matrixtree = null;
+            initialState = null;
+            finalState = null;
+            size = Input.getSizeFromUser(s);
+            if (Input.getYesOrNoQuestionFromUser(s, "¿El estado inicial va a ser aleatorio?")) {
+                initialState = Input.getMatrixFromArray(Input.getNumberArrayFromRandomNumbers(size), size);
+            } else {
+                initialState = Input.getMatrixFromUser(s, size, "estado_inicial");
+            }
+
+            if (Input.getYesOrNoQuestionFromUser(s, "¿El estado final va a ser aleatorio?")) {
+                finalState = Input.getMatrixFromArray(Input.randomizeExistingArray(Input.getArrayFromMatrix(initialState)), size);
+            } else {
+                finalState = Input.getMatrixFromUser(s, size, "estado_final");
+            }
+
+            option = Input.getUserOption(s);
+            
+            if (option == Constants.AMPLITUD) {
+                matrixtree = new Board(initialState, finalState);
+                ((Board)matrixtree).Amplitud(validRoutes);
+            } else if (option == Constants.PROFUNDIDAD) {
+                matrixtree = new Board(initialState, finalState);
+                ((Board)matrixtree).Profundidad(validRoutes);
+            } else if (option == Constants.BIDIRECCIONAL) {
+                matrixtree = new DoubleBoard(initialState, finalState);
+                ((DoubleBoard)matrixtree).Bidireccional(validRoutes);
+            }
+            
+            bestRoute = Board.getBestRoute(validRoutes);
+            if (bestRoute == null) {
+                System.out.println("No hay solución");
+            } else {
+                System.out.println("Mejor camino: " + bestRoute);
+            }
+            
+            if (Input.getYesOrNoQuestionFromUser(s, "¿Desea salir?")) {
+                return;
+            }
         }
-        
-        b = new Board(matrix, finalState);
-        rutasGanadoras = new ArrayList<>();
-        b.Profundidad(rutasGanadoras);
-        bestRoute = Board.getBestRoute(rutasGanadoras);
-        if (bestRoute == null) {
-            System.out.println("No hay solución");
-        } else {
-            System.out.println("Mejor camino: " + bestRoute);
-        }
-        
-        DoubleBoard b2 = new DoubleBoard(matrix, finalState);
-        rutasGanadoras = new ArrayList<>();
-        b2.Bidireccional(rutasGanadoras);
-        bestRoute = Board.getBestRoute(rutasGanadoras);
-        if (bestRoute == null) {
-            System.out.println("No hay solución");
-        } else {
-            System.out.println("Mejor camino: " + bestRoute);
-        }        
     }   
 }

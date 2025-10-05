@@ -18,6 +18,10 @@ public final class Constants {
     public static String START_STATE = "S";
     public static String FINAL_STATE = "F";
     
+    public static int AMPLITUD = 1;
+    public static int PROFUNDIDAD = 2;
+    public static int BIDIRECCIONAL = 3;
+    
     private Constants() throws IllegalAccessException {
         throw new IllegalAccessException("Wait... how were you able to call this?");
     }

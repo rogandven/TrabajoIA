@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @author Roger
  */
 
-public final class DoubleBoard {
+public final class DoubleBoard implements MatrixTree {
     private int[][] matrix;
     private int[][] matrix2;
     private int[] emptySpaceCoordinates;

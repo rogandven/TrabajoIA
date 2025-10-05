@@ -12,7 +12,7 @@ import java.util.Objects;
  * @author Roger
  */
 
-public final class Board {
+public final class Board implements MatrixTree {
     private int[][] matrix;
     private int[] emptySpaceCoordinates;
     private int[][] finalState;
