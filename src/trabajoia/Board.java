@@ -39,7 +39,7 @@ public final class Board {
         for (MatrixSwapPlan p : swapList) {
             try {
                 Board b = new Board(copyMatrixWithSwappedValues(matrix, p), finalState, visitedStateListPointer, id + p.id, null);
-                printMatrixHeader(id + p.id);
+                printMatrixHeader(b.id);
                 printMatrix(b.matrix);
                 if (isFinalState(b.matrix)) {
                     printWinningStateAnnouncement();
