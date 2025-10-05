@@ -137,10 +137,10 @@ public final class Board {
         this.finalState = validateMatrix(finalState);
         validateBothMatrices(matrix, finalState);
         this.visitedStateListPointer = visitedStateListPointer;
-        this.emptySpaceCoordinates = new int[2];
+        this.emptySpaceCoordinates = Board.findEmptySpaceCoordinates(this.matrix);
         // this.previous = null;
         this.id = id;
-        Board.findEmptySpaceCoordinates(this.matrix, this.emptySpaceCoordinates);
+        
     }
     
     public Board(int[][] matrix, int[][] finalState) {
@@ -164,20 +164,22 @@ public final class Board {
     }
 
     private void printMatrix() {
-        this.printMatrix(this.matrix);
+        printMatrix(this.matrix);
     }    
 
-    public static void findEmptySpaceCoordinates(int[][] matrix, int[] emptySpaceCoordinates) {
+    public static int[] findEmptySpaceCoordinates(int[][] matrix) {
+        int emptySpaceCoordinates[];
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 if (matrix[i][j] == 0) {
                     emptySpaceCoordinates = new int[2];
                     emptySpaceCoordinates[0] = i;
                     emptySpaceCoordinates[1] = j;
-                    return;
+                    return emptySpaceCoordinates;
                 }
             }
         }
+        return null;
     }
     
     private boolean isFinalState(int[][] matrix) {

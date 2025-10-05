@@ -126,14 +126,11 @@ public final class DoubleBoard {
         validateBothMatrices(matrix, finalState);
         validateBothMatrices(matrix2, beginningState);
         this.visitedStateListPointer = visitedStateListPointer;
-        this.emptySpaceCoordinates = new int[2];
-        this.emptySpaceCoordinates2 = new int[2];
+        this.emptySpaceCoordinates = findEmptySpaceCoordinates(matrix);
+        this.emptySpaceCoordinates2 = findEmptySpaceCoordinates2(matrix2);
         // this.previous = null;
         this.id = id;
         this.id2 = id2;
-        
-        this.findEmptySpaceCoordinates(matrix, this.emptySpaceCoordinates);
-        this.findEmptySpaceCoordinates2(matrix2, this.emptySpaceCoordinates2);
     }    
     
     public DoubleBoard(int[][] matrix, int[][] finalState) {
@@ -168,12 +165,12 @@ public final class DoubleBoard {
         printMatrixPair(this.matrix, this.matrix2);
     }    
 
-    private void findEmptySpaceCoordinates(int[][] matrix, int[] emptySpaceCoordinates) {
-        Board.findEmptySpaceCoordinates(matrix, emptySpaceCoordinates);
+    private int[] findEmptySpaceCoordinates(int[][] matrix) {
+        return Board.findEmptySpaceCoordinates(matrix);
     }
     
-    private void findEmptySpaceCoordinates2(int[][] matrix, int[] emptySpaceCoordinates) {
-        Board.findEmptySpaceCoordinates(matrix, emptySpaceCoordinates);
+    private int[] findEmptySpaceCoordinates2(int[][] matrix) {
+        return Board.findEmptySpaceCoordinates(matrix);
     }    
     
     private boolean isFinalState(int[][] matrix) {
@@ -194,10 +191,6 @@ public final class DoubleBoard {
             System.arraycopy(matrix[i], 0, newMatrix[i], 0, matrix[0].length);
         }
         return newMatrix;
-    }
-    
-    private static void swapValuesInMatrix(int[][] matrix, MatrixSwapPlan msp) {
-        Board.swapValuesInMatrix(matrix, msp);
     }
     
     private static boolean compareMatrices(int[][] a, int[][] b) {
