@@ -9,7 +9,14 @@ package trabajoia;
  * @author Roger
  */
 public final class Constants {
-    public static final boolean DEBUG_PRINTING_ALLOWED = true;
+    public static final boolean DEBUG_PRINTING_ALLOWED = false;
+    public static final boolean MATRIX_PRINTING_ALLOWED = true;
+    public static String UP_DIRECTION = "C";
+    public static String DOWN_DIRECTION = "A";
+    public static String LEFT_DIRECTION = "D";
+    public static String RIGHT_DIRECTION = "B";
+    public static String START_STATE = "S";
+    public static String FINAL_STATE = "F";
     
     private Constants() throws IllegalAccessException {
         throw new IllegalAccessException("Wait... how were you able to call this?");

@@ -41,12 +41,32 @@ public class Main {
         
         Board b = new Board(matrix, finalState);
         ArrayList<String> rutasGanadoras = new ArrayList<>();
-        b.Profundidad(rutasGanadoras);
+        b.Amplitud(rutasGanadoras);
         String bestRoute = Board.getBestRoute(rutasGanadoras);
         if (bestRoute == null) {
             System.out.println("No hay solución");
         } else {
             System.out.println("Mejor camino: " + bestRoute);
         }
+        
+        b = new Board(matrix, finalState);
+        rutasGanadoras = new ArrayList<>();
+        b.Profundidad(rutasGanadoras);
+        bestRoute = Board.getBestRoute(rutasGanadoras);
+        if (bestRoute == null) {
+            System.out.println("No hay solución");
+        } else {
+            System.out.println("Mejor camino: " + bestRoute);
+        }
+        
+        DoubleBoard b2 = new DoubleBoard(matrix, finalState);
+        rutasGanadoras = new ArrayList<>();
+        b2.Bidireccional(rutasGanadoras);
+        bestRoute = Board.getBestRoute(rutasGanadoras);
+        if (bestRoute == null) {
+            System.out.println("No hay solución");
+        } else {
+            System.out.println("Mejor camino: " + bestRoute);
+        }        
     }   
 }
