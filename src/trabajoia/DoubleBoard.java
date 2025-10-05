@@ -5,8 +5,6 @@
 package trabajoia;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Objects;
 /**
  *
  * @author Roger
@@ -78,28 +76,6 @@ public final class DoubleBoard {
         }
     }
     
-
-    private class MatrixSwapPlan {
-        private final int p1X;
-        private final int p1Y;
-        private final int p2X;
-        private final int p2Y;
-        private final String id;
-
-        protected MatrixSwapPlan(int p1X, int p1Y, int p2X, int p2Y, String id) {
-            this.p1X = p1X;
-            this.p1Y = p1Y;
-            this.p2X = p2X;
-            this.p2Y = p2Y;
-            this.id = id;
-        }
-
-        @Override
-        public String toString() {
-            return "MatrixSwapPlan{" + "p1X=" + p1X + ", p1Y=" + p1Y + ", p2X=" + p2X + ", p2Y=" + p2Y + ", id=" + id + '}';
-        }
-    }
-    
     private class pairedMatrixSwapPlan {
         private final MatrixSwapPlan m1;
         private final MatrixSwapPlan m2;
@@ -118,24 +94,14 @@ public final class DoubleBoard {
     // C -> Arriba
     // A -> Abajo
     // D -> Izquierda
+    // B -> Derecha// C -> Arriba
+    // A -> Abajo
+    // D -> Izquierda
     // B -> Derecha
     
     
     private ArrayList<MatrixSwapPlan> getSwapList(int[][] matrix, int[] emptySpaceCoordinates) {
-        ArrayList<MatrixSwapPlan> swapList = new ArrayList<>();
-        if (emptySpaceCoordinates[0] < (matrix.length - 1)) {
-            swapList.add(new MatrixSwapPlan(emptySpaceCoordinates[0], emptySpaceCoordinates[1], emptySpaceCoordinates[0] + 1, emptySpaceCoordinates[1], Constants.DOWN_DIRECTION));
-        }
-        if (emptySpaceCoordinates[1] < (matrix[0].length - 1)) {
-            swapList.add(new MatrixSwapPlan(emptySpaceCoordinates[0], emptySpaceCoordinates[1], emptySpaceCoordinates[0], emptySpaceCoordinates[1] + 1, Constants.RIGHT_DIRECTION));
-        }
-        if (emptySpaceCoordinates[0] > 0) {
-            swapList.add(new MatrixSwapPlan(emptySpaceCoordinates[0], emptySpaceCoordinates[1], emptySpaceCoordinates[0] - 1, emptySpaceCoordinates[1], Constants.UP_DIRECTION));
-        }
-        if (emptySpaceCoordinates[1] > 0) {
-            swapList.add(new MatrixSwapPlan(emptySpaceCoordinates[0], emptySpaceCoordinates[1], emptySpaceCoordinates[0], emptySpaceCoordinates[1] - 1, Constants.LEFT_DIRECTION));
-        }        
-        return swapList;
+        return Board.getSwapList(matrix, emptySpaceCoordinates);
     }
     
     private ArrayList<pairedMatrixSwapPlan> getPairedSwapList(int[][] m1, int[][] m2) {
@@ -166,8 +132,8 @@ public final class DoubleBoard {
         this.id = id;
         this.id2 = id2;
         
-        this.findEmptySpaceCoordinates();
-        this.findEmptySpaceCoordinates2();
+        this.findEmptySpaceCoordinates(matrix, this.emptySpaceCoordinates);
+        this.findEmptySpaceCoordinates2(matrix2, this.emptySpaceCoordinates2);
     }    
     
     public DoubleBoard(int[][] matrix, int[][] finalState) {
@@ -202,30 +168,12 @@ public final class DoubleBoard {
         printMatrixPair(this.matrix, this.matrix2);
     }    
 
-    private void findEmptySpaceCoordinates() {
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] == 0) {
-                    emptySpaceCoordinates = new int[2];
-                    emptySpaceCoordinates[0] = i;
-                    emptySpaceCoordinates[1] = j;
-                    return;
-                }
-            }
-        }
+    private void findEmptySpaceCoordinates(int[][] matrix, int[] emptySpaceCoordinates) {
+        Board.findEmptySpaceCoordinates(matrix, emptySpaceCoordinates);
     }
     
-    private void findEmptySpaceCoordinates2() {
-        for (int i = 0; i < matrix2.length; i++) {
-            for (int j = 0; j < matrix2[i].length; j++) {
-                if (matrix2[i][j] == 0) {
-                    emptySpaceCoordinates2 = new int[2];
-                    emptySpaceCoordinates2[0] = i;
-                    emptySpaceCoordinates2[1] = j;
-                    return;
-                }
-            }
-        }
+    private void findEmptySpaceCoordinates2(int[][] matrix, int[] emptySpaceCoordinates) {
+        Board.findEmptySpaceCoordinates(matrix, emptySpaceCoordinates);
     }    
     
     private boolean isFinalState(int[][] matrix) {
@@ -237,12 +185,7 @@ public final class DoubleBoard {
     }
     
     private static int[][] copyMatrixWithSwappedValues(int[][] matrix, MatrixSwapPlan msp) {
-        int[][] newMatrix = new int[matrix.length][matrix[0].length];
-        for (int i = 0; i < matrix.length; i++) {
-            System.arraycopy(matrix[i], 0, newMatrix[i], 0, matrix[0].length);
-        }
-        swapValuesInMatrix(newMatrix, msp);
-        return newMatrix;
+        return Board.copyMatrixWithSwappedValues(matrix, msp);
     }
     
     private static int[][] copyMatrix(int[][] matrix) {
@@ -254,24 +197,11 @@ public final class DoubleBoard {
     }
     
     private static void swapValuesInMatrix(int[][] matrix, MatrixSwapPlan msp) {
-        int temp = matrix[msp.p1X][msp.p1Y];
-        matrix[msp.p1X][msp.p1Y] = matrix[msp.p2X][msp.p2Y];
-        matrix[msp.p2X][msp.p2Y] = temp;
+        Board.swapValuesInMatrix(matrix, msp);
     }
     
     private static boolean compareMatrices(int[][] a, int[][] b) {
-        if (a.length != b.length || a[0].length != b[0].length) {
-            return false;
-        }
-        
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < a[0].length; j++) {
-                if (a[i][j] != b[i][j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return Board.compareMatrices(a, b);
     }
     
     private boolean isStateVisited(MatrixPair pair) {
@@ -291,93 +221,27 @@ public final class DoubleBoard {
     }
     
     private static void printWinningStateAnnouncement() {
-        System.out.println("Estado ganador");
+        Board.printWinningStateAnnouncement();
     }
 
     private static void printVisitedStateAnnouncement() {
-        if (Constants.DEBUG_PRINTING_ALLOWED) {
-            System.out.println("Estado ya visitado");
-        }
+        Board.printVisitedStateAnnouncement();
     }        
     
-    private static void printRoadChangeAnnouncement() {
+    /* private static void printRoadChangeAnnouncement() {
         System.out.println("Cambio de camino");
-    }
+    } */
 
     private static void printErrorMessage(Throwable t) {
-        if (Constants.DEBUG_PRINTING_ALLOWED) {
-            System.out.println(t.getClass().getSimpleName() + ": " + t.getMessage());
-        }
+        Board.printErrorMessage(t);
     }
     
     private static int[][] validateMatrix(int[][] matrix) {
-        if (matrix.length <= 1) {
-            throw new CustomException("Matriz invalida");
-        }
-        int length1 = matrix.length;
-        for (int[] matrix1 : matrix) {
-            if (matrix1.length != length1) {
-                throw new CustomException("La matriz debe ser cuadrada");
-            }
-        }
-        
-        int emptySpaces = 0;
-        for (int[] matrix1 : matrix) {
-            for (int j = 0; j < matrix1.length; j++) {
-                if (matrix1[j] == 0) {
-                    emptySpaces++;
-                }
-                if (emptySpaces > 1) {
-                    throw new CustomException("Todas las matrices deben tener un solo espacio vacío");
-                }
-            }
-        }
-        return matrix;
-    }
-    
-    private static class CustomException extends RuntimeException {
-        public CustomException() {
-        }
-
-        public CustomException(String s) {
-            super(s);
-        }
-
-        public CustomException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        public CustomException(Throwable cause) {
-            super(cause);
-        }
+        return Board.validateMatrix(matrix);
     }
     
     private static void validateBothMatrices(int[][] matrix1, int[][] matrix2) {
-        ArrayList<Integer> array1 = new ArrayList<>();
-        ArrayList<Integer> array2 = new ArrayList<>();
-        
-        for(int[] arr : matrix1) {
-            for(int i : arr) {
-                array1.add(i);
-            }
-        }
-        for(int[] arr : matrix2) {
-            for(int i : arr) {
-                array2.add(i);
-            }
-        }
-        Collections.sort(array1);
-        Collections.sort(array2);
-        
-        if (array1.size() != array2.size()) {
-            throw new CustomException("Las matrices son de distinto tamanio");
-        }
-        
-        for (int i = 0; i < array1.size(); i++) {
-            if (!Objects.equals(array1.get(i), array2.get(i))) {
-                throw new CustomException("Las matrices no tienen los mismos valores");
-            }
-        }
+        Board.validateBothMatrices(matrix1, matrix2);
     }
     
     private static class MatrixPair {
