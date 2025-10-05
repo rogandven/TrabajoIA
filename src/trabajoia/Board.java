@@ -18,7 +18,7 @@ public final class Board {
     private int[] emptySpaceCoordinates;
     private int[][] finalState;
     private ArrayList<int[][]> visitedStateListPointer; 
-    private int[][] previous;
+    // private int[][] previous;
     private String id;
     
     public void Amplitud(ArrayList<String> winningRoutesPointer) {
@@ -41,7 +41,7 @@ public final class Board {
 
         for (MatrixSwapPlan p : swapList) {
             try {
-                Board b = new Board(copyMatrixWithSwappedValues(matrix, p), finalState, visitedStateListPointer, id + p.id, null);
+                Board b = new Board(copyMatrixWithSwappedValues(matrix, p), finalState, visitedStateListPointer, id + p.id);
                 printMatrixHeader(b.id);
                 printMatrix(b.matrix);
                 if (isFinalState(b.matrix)) {
@@ -99,7 +99,7 @@ public final class Board {
 
         for (MatrixSwapPlan p : swapList) {
             try {
-                Board b = new Board(copyMatrixWithSwappedValues(this.matrix, p), this.finalState, this.visitedStateListPointer, id + p.id, null);
+                Board b = new Board(copyMatrixWithSwappedValues(this.matrix, p), this.finalState, this.visitedStateListPointer, id + p.id);
                 b.Profundidad(amount + 1, limit, winningRoutesPointer);
                 printRoadChangeAnnouncement();
             } catch (StackOverflowError e) {
@@ -168,19 +168,19 @@ public final class Board {
         return swapList;
     }
     
-    private Board(int[][] matrix, int[][] finalState, ArrayList<int[][]> visitedStateListPointer, String id, Board previous) {
+    private Board(int[][] matrix, int[][] finalState, ArrayList<int[][]> visitedStateListPointer, String id) {
         this.matrix = validateMatrix(matrix);
         this.finalState = validateMatrix(finalState);
         validateBothMatrices(matrix, finalState);
         this.visitedStateListPointer = visitedStateListPointer;
         this.emptySpaceCoordinates = new int[2];
-        this.previous = null;
+        // this.previous = null;
         this.id = id;
         this.findEmptySpaceCoordinates();
     }
     
     public Board(int[][] matrix, int[][] finalState) {
-        this(matrix, finalState, new ArrayList<>(), "A", null);
+        this(matrix, finalState, new ArrayList<>(), "A");
     }
             
     public static void printMatrix(int[][] m) {
