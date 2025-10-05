@@ -20,26 +20,33 @@ public class Main {
         int[][] matrix = new int[3][3];
         int[][] finalState = new int[3][3];
         matrix[0][0] = 0;
-        matrix[0][1] = 3;
-        matrix[0][2] = 3;
-        matrix[1][0] = 3;
-        matrix[1][1] = 3;
-        matrix[1][2] = 3;
-        matrix[2][0] = 3;
-        matrix[2][1] = 3;
-        matrix[2][2] = 3;        
+        matrix[0][1] = 1;
+        matrix[0][2] = 1;
+        matrix[1][0] = 1;
+        matrix[1][1] = 1;
+        matrix[1][2] = 1;
+        matrix[2][0] = 1;
+        matrix[2][1] = 1;
+        matrix[2][2] = 1;        
         
-        finalState[0][0] = 3;
-        finalState[0][1] = 3;
-        finalState[0][2] = 3;
-        finalState[1][0] = 3;
-        finalState[1][1] = 3;
-        finalState[1][2] = 3;
-        finalState[2][0] = 3;
-        finalState[2][1] = 0;
-        finalState[2][2] = 3;   
+        finalState[0][0] = 1;
+        finalState[0][1] = 1;
+        finalState[0][2] = 1;
+        finalState[1][0] = 1;
+        finalState[1][1] = 1;
+        finalState[1][2] = 1;
+        finalState[2][0] = 1;
+        finalState[2][1] = 1;
+        finalState[2][2] = 0;   
         
         Board b = new Board(matrix, finalState);
-        b.Amplitud();
+        ArrayList<String> rutasGanadoras = new ArrayList<>();
+        b.Profundidad(rutasGanadoras);
+        String bestRoute = Board.getBestRoute(rutasGanadoras);
+        if (bestRoute == null) {
+            System.out.println("No hay solución");
+        } else {
+            System.out.println("Mejor camino: " + bestRoute);
+        }
     }   
 }

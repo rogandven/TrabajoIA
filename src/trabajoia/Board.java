@@ -21,11 +21,14 @@ public final class Board {
     private int[][] previous;
     private String id;
     
-    public void Amplitud() {
-        Amplitud(false);
+    public void Amplitud(ArrayList<String> winningRoutesPointer) {
+        if (winningRoutesPointer == null) {
+            throw new CustomException("El puntero a las rutas ganadoras no puede ser nulo");
+        }        
+        Amplitud(false, winningRoutesPointer);
     }
     
-    private void Amplitud(boolean hijo) {
+    private void Amplitud(boolean hijo, ArrayList<String> winningRoutesPointer) {
         if (isStateVisited(matrix)) {
             return;
         }
@@ -42,6 +45,7 @@ public final class Board {
                 printMatrixHeader(b.id);
                 printMatrix(b.matrix);
                 if (isFinalState(b.matrix)) {
+                    winningRoutesPointer.add(id);
                     printWinningStateAnnouncement();
                     continue;
                 }        
@@ -52,17 +56,37 @@ public final class Board {
         }
         for (Board child : children) {
             try {
-                child.Amplitud(true);
+                child.Amplitud(true, winningRoutesPointer);
             } catch (StackOverflowError e) {
                 printErrorMessage(e);
             }
         }            
     }
     
-    public void Profundidad() {
+    public void Profundidad(ArrayList<String> winningRoutesPointer) {
+        if (winningRoutesPointer == null) {
+            throw new CustomException("El puntero a las rutas ganadoras no puede ser nulo");
+        }
+        Profundidad(0, new IntegerPointer(-1), winningRoutesPointer);
+    }
+    
+    private void Profundidad(int amount, IntegerPointer limit, ArrayList<String> winningRoutesPointer) {
         printMatrixHeader(id);
         this.printMatrix();
+        
+        if ((limit.getN() != -1) && amount > limit.getN()) {
+            printLimitAnnouncement();
+            return;
+        }
+        
         if (isFinalState(matrix)) {
+            if (limit.getN() == -1) {
+                limit.setN(amount);
+            }
+            if (amount < limit.getN()) {
+                limit.setN(amount);
+            }
+            winningRoutesPointer.add(id);
             printWinningStateAnnouncement();
             return;
         }
@@ -76,7 +100,7 @@ public final class Board {
         for (MatrixSwapPlan p : swapList) {
             try {
                 Board b = new Board(copyMatrixWithSwappedValues(this.matrix, p), this.finalState, this.visitedStateListPointer, id + p.id, null);
-                b.Profundidad();
+                b.Profundidad(amount + 1, limit, winningRoutesPointer);
                 printRoadChangeAnnouncement();
             } catch (StackOverflowError e) {
                 printErrorMessage(e);
@@ -84,9 +108,6 @@ public final class Board {
         }
     }
     
-    public void Bidireccional() {
-        
-    }
 
     private class MatrixSwapPlan {
         private final int p1X;
@@ -104,6 +125,16 @@ public final class Board {
         }
     }
     
+    private class pairedMatrixSwapPlan {
+        private final MatrixSwapPlan m1;
+        private final MatrixSwapPlan m2;
+
+        protected pairedMatrixSwapPlan(MatrixSwapPlan m1, MatrixSwapPlan m2) {
+            this.m1 = m1;
+            this.m2 = m2;
+        }
+    }
+    
     private ArrayList<MatrixSwapPlan> getSwapList(int[][] matrix) {
         ArrayList<MatrixSwapPlan> swapList = new ArrayList<>();
         if (emptySpaceCoordinates[0] < (matrix.length - 1)) {
@@ -118,6 +149,22 @@ public final class Board {
         if (emptySpaceCoordinates[1] > 0) {
             swapList.add(new MatrixSwapPlan(emptySpaceCoordinates[0], emptySpaceCoordinates[1], emptySpaceCoordinates[0], emptySpaceCoordinates[1] - 1, "D"));
         }        
+        return swapList;
+    }
+
+    
+    
+    private ArrayList<pairedMatrixSwapPlan> getPairedSwapList(int[][] m1, int[][] m2) {
+        ArrayList<pairedMatrixSwapPlan> swapList = new ArrayList<>();
+        ArrayList<MatrixSwapPlan> swapListA = getSwapList(m1);
+        ArrayList<MatrixSwapPlan> swapListB = getSwapList(m2);
+        
+        for (MatrixSwapPlan l1 : swapListA) {
+            for (MatrixSwapPlan l2 : swapListB) {
+                swapList.add(new pairedMatrixSwapPlan(l1, l2));
+            }
+        }
+        
         return swapList;
     }
     
@@ -258,7 +305,7 @@ public final class Board {
         return matrix;
     }
     
-    private static class CustomException extends IllegalArgumentException {
+    private static class CustomException extends RuntimeException {
         public CustomException() {
         }
 
@@ -301,6 +348,41 @@ public final class Board {
                 throw new CustomException("Las matrices no tienen los mismos valores");
             }
         }
+    }
+    
+    private static final class IntegerPointer {
+        private int n;
+        
+        public int getN() {
+            return n;
+        }
+
+        public void setN(int n) {
+            this.n = n;
+        }
+
+        public IntegerPointer(int n) {
+            this.setN(n);
+        }
+    }
+    
+    private static void printLimitAnnouncement() {
+        System.out.println("Limite sobrepasado");
+    }
+    
+    public static String getBestRoute(ArrayList<String> routes){
+        if (routes.size() <= 0) {
+            return null;
+        }
+        String bestRoute = routes.get(0);
+        String current;
+        for (int i = 1; i < routes.size(); i++) {
+            current = routes.get(i);
+            if (current != null && current.length() < bestRoute.length()) {
+                bestRoute = current;
+            }
+        }
+        return bestRoute;
     }
 }
 
