@@ -185,8 +185,6 @@ public final class Board {
         if (isStateVisited(matrix)) {
             // System.out.println("Estado ya visitado");
             return;
-        } else {
-            visitedStateListPointer.add(matrix);
         }
         if (!hijo) {
             System.out.println("Matriz " + id + ": ");
@@ -225,9 +223,7 @@ public final class Board {
             System.out.println("Estado ganador");
             return;
         }
-        if (!isStateVisited(matrix)) {
-            this.visitedStateListPointer.add(this.matrix);
-        } else {
+        if (isStateVisited(matrix)) {
             System.out.println("Estado ya visitado");
             return;
         }
