@@ -19,7 +19,6 @@ public class Main {
     public static void main(String[] args) {
         int[][] matrix = new int[3][3];
         int[][] finalState = new int[3][3];
-        ArrayList<int[][]> visitedStates = new ArrayList<>();
         matrix[0][0] = 0;
         matrix[0][1] = 3;
         matrix[0][2] = 3;
@@ -40,8 +39,7 @@ public class Main {
         finalState[2][1] = 0;
         finalState[2][2] = 3;   
         
-        Board b = new Board(matrix, finalState, visitedStates, "A");
-        b.Amplitud(false);
-    }
-    
+        Board b = new Board(matrix, finalState);
+        b.Amplitud();
+    }   
 }
