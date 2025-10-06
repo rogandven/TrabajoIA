@@ -8,20 +8,20 @@ package trabajoia;
  *
  * @author Roger
  */
-public class CustomException extends RuntimeException {
+public class TooManyStatesException extends RuntimeException {
     
-    public CustomException() {
+    public TooManyStatesException() {
     }
 
-    public CustomException(String s) {
+    public TooManyStatesException(String s) {
         super(s);
     }
 
-    public CustomException(String message, Throwable cause) {
+    public TooManyStatesException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public CustomException(Throwable cause) {
+    public TooManyStatesException(Throwable cause) {
         super(cause);
     }
     

@@ -7,12 +7,15 @@ package trabajoia;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Scanner;
 /**
  *
  * @author Roger
  */
 
 public final class Board implements MatrixTree {
+    public static int MAX_STATES = 0;
+    
     private int[][] matrix;
     private int[] emptySpaceCoordinates;
     private int[][] finalState;
@@ -21,6 +24,10 @@ public final class Board implements MatrixTree {
     private String id;
     
     public void Amplitud(ArrayList<String> winningRoutesPointer) {
+        if (Constants.DEBUG_PRINTING_ALLOWED) {
+            System.out.println("MAX_STATES = " + MAX_STATES);
+            new Scanner(System.in).nextLine();
+        }
         if (winningRoutesPointer == null) {
             throw new CustomException("El puntero a las rutas ganadoras no puede ser nulo");
         }        
@@ -28,9 +35,12 @@ public final class Board implements MatrixTree {
     }
     
     private void Amplitud(boolean hijo, ArrayList<String> winningRoutesPointer) {
+        safeGuard(id);
         if (isStateVisited(matrix)) {
             printVisitedStateAnnouncement();
-            return;
+            if (getShallReturn(winningRoutesPointer, id)) {
+                return;
+            }
         }
         if (!hijo) {
             printMatrixHeader(id);
@@ -41,15 +51,19 @@ public final class Board implements MatrixTree {
 
         for (MatrixSwapPlan p : swapList) {
             try {
+                if (Constants.DEBUG_PRINTING_ALLOWED) {
+                    System.out.println("SWAP ID = " + p.id);
+                }
                 Board b = new Board(copyMatrixWithSwappedValues(matrix, p), finalState, visitedStateListPointer, id + p.id);
                 printMatrixHeader(b.id);
                 printMatrix(b.matrix);
                 if (isFinalState(b.matrix)) {
                     winningRoutesPointer.add(b.id + Constants.FINAL_STATE);
                     printWinningStateAnnouncement();
-                    continue;
+                    // visitedStateListPointer.removeAll(visitedStateListPointer);
+                } else {
+                    children.add(b);
                 }        
-                children.add(b);
             } catch (StackOverflowError e) {
                 printErrorMessage(e);
             }
@@ -70,10 +84,62 @@ public final class Board implements MatrixTree {
         Profundidad(0, new IntegerPointer(-1), winningRoutesPointer);
     }
     
+    public static boolean getShallReturn(ArrayList<String> winningRoutesPointer, String currentRoute) {
+        if (Constants.SMART_RETURNING_ENABLED) {
+            boolean shallReturn = true;
+            if (currentRoute == null) {
+                return true;
+            }
+            for (String route : winningRoutesPointer) {
+                if (route == null) {
+                    continue;
+                }
+                if ((currentRoute.length()) < (route.length())) {
+                    shallReturn = false;
+                    break;
+                }
+            }
+            printVisitedStateAnnouncement();
+            return shallReturn;
+        } else {
+            return true;
+        }
+
+    }
+
+    public static void safeGuard(String id) {
+        if (Constants.DEBUG_PRINTING_ALLOWED) {
+            System.out.println("ID LENGTH = " + id.length());
+        }
+        if (id.length() >= MAX_STATES) {
+            throw new TooManyStatesException("Bucle infinito detectado");
+        }
+    }
+    
     private void Profundidad(int amount, IntegerPointer limit, ArrayList<String> winningRoutesPointer) {
+        safeGuard(id);
+        if (isFinalState(matrix)) {
+            if (limit.getN() == -1) {
+                limit.setN(amount);
+            }
+            if (amount < limit.getN()) {
+                limit.setN(amount);
+            }
+            winningRoutesPointer.add(id + Constants.FINAL_STATE);
+            
+            Board.printMatrixHeader(id);
+            this.printMatrix();
+            printWinningStateAnnouncement();
+            // visitedStateListPointer.removeAll(visitedStateListPointer);
+            return;
+        }
+        
         if (isStateVisited(matrix)) {
             printVisitedStateAnnouncement();
-            return;
+
+            if (getShallReturn(winningRoutesPointer, id)) {
+                return;
+            }
         }        
         
         printMatrixHeader(id);
@@ -84,17 +150,6 @@ public final class Board implements MatrixTree {
             return;
         }
         
-        if (isFinalState(matrix)) {
-            if (limit.getN() == -1) {
-                limit.setN(amount);
-            }
-            if (amount < limit.getN()) {
-                limit.setN(amount);
-            }
-            winningRoutesPointer.add(id + Constants.FINAL_STATE);
-            printWinningStateAnnouncement();
-            return;
-        }
         /* if (isStateVisited(matrix)) {
             printVisitedStateAnnouncement();
             return;
@@ -145,6 +200,7 @@ public final class Board implements MatrixTree {
     
     public Board(int[][] matrix, int[][] finalState) {
         this(matrix, finalState, new ArrayList<>(), Constants.START_STATE);
+        MAX_STATES = factorial(matrix.length * matrix[0].length);
     }
             
     public static void printMatrix(int[][] m) {
@@ -223,6 +279,9 @@ public final class Board implements MatrixTree {
             }
         }
         visitedStateListPointer.add(matrix);
+        if (visitedStateListPointer.size() > MAX_STATES) {
+            throw new TooManyStatesException("Todos los estados ya fueron visitados");
+        }
         return false;
     }
     
@@ -341,6 +400,15 @@ public final class Board implements MatrixTree {
             }
         }
         return bestRoute;
+    }
+    
+    public static int factorial(int n) {
+        n = Math.abs(n);
+        int carry = 1;
+        for (int i = 2; i <= n; i++) {
+            carry *= i;
+        }
+        return Math.abs(carry);
     }
 }
 

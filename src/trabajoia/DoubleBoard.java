@@ -11,6 +11,7 @@ import java.util.ArrayList;
  */
 
 public final class DoubleBoard implements MatrixTree {
+    public static int MAX_STATES = 0;
     private int[][] matrix;
     private int[][] matrix2;
     private int[] emptySpaceCoordinates;
@@ -30,36 +31,47 @@ public final class DoubleBoard implements MatrixTree {
     }
     
     private void Bidireccional(int amount, ArrayList<String> winningRoutesPointer) {
-        if (isStateVisited(new MatrixPair(matrix, matrix2))) {
-            printVisitedStateAnnouncement();
+        Board.safeGuard(id);
+        if (compareMatrices(this.matrix, this.matrix2)) {
+            winningRoutesPointer.add(id + reverseString(id2));
+            
+            DoubleBoard.printMatrixHeader(id, id2);
+            this.printMatrixPair();
+            DoubleBoard.printWinningStateAnnouncement();
+            // visitedStateListPointer.removeAll(visitedStateListPointer);
             return;
         }
-
-        printMatrixHeader(id, id2);
-        this.printMatrixPair();
-
         if (isFinalState(matrix)) {
             // System.out.println("M1 = FinalState");
             // throw new IllegalArgumentException("no esta bien esta comparacion xd");
             winningRoutesPointer.add(id + Constants.FINAL_STATE);
+            
+            DoubleBoard.printMatrixHeader(id, id2);
+            this.printMatrixPair();
             DoubleBoard.printWinningStateAnnouncement();
+            // visitedStateListPointer.removeAll(visitedStateListPointer);
             return;
         }
         if (isBeginningState(matrix2)) {
             // System.out.println("M2 = FinalState");
             // throw new IllegalArgumentException("no esta bien esta comparacion xd");
             winningRoutesPointer.add(reverseString(id2) + Constants.START_STATE);
+
+            DoubleBoard.printMatrixHeader(id, id2);
+            this.printMatrixPair();            
             DoubleBoard.printWinningStateAnnouncement();
+            // visitedStateListPointer.removeAll(visitedStateListPointer);
             return;
         }
-        if (compareMatrices(this.matrix, this.matrix2)) {
-            winningRoutesPointer.add(id + reverseString(id2));
-            DoubleBoard.printWinningStateAnnouncement();
-        }
-        /* if (isStateVisited(new MatrixPair(matrix, matrix2))) {
+        if (isStateVisited(new MatrixPair(matrix, matrix2))) {
             printVisitedStateAnnouncement();
-            return;
-        } */
+            if (Board.getShallReturn(winningRoutesPointer, id + id2)) {
+                return;
+            }
+        }
+        
+        printMatrixHeader(id, id2);
+        this.printMatrixPair();
  
         ArrayList<pairedMatrixSwapPlan> swapList = this.getPairedSwapList(matrix, matrix2);
         
@@ -135,6 +147,7 @@ public final class DoubleBoard implements MatrixTree {
     
     public DoubleBoard(int[][] matrix, int[][] finalState) {
         this(matrix, finalState, copyMatrix(finalState), copyMatrix(matrix), new ArrayList<>(), Constants.START_STATE, Constants.FINAL_STATE);
+        MAX_STATES = Board.factorial(matrix.length * matrix[0].length);
     }
             
     public static void printMatrixPair(int[][] m, int[][] m2) {

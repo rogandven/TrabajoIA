@@ -50,15 +50,27 @@ public class Main {
             option = Input.getUserOption(s);
             
             try {
-                if (option == Constants.AMPLITUD) {
-                    matrixtree = new Board(initialState, finalState);
-                    ((Board)matrixtree).Amplitud(validRoutes);
-                } else if (option == Constants.PROFUNDIDAD) {
-                    matrixtree = new Board(initialState, finalState);
-                    ((Board)matrixtree).Profundidad(validRoutes);
-                } else if (option == Constants.BIDIRECCIONAL) {
-                    matrixtree = new DoubleBoard(initialState, finalState);
-                    ((DoubleBoard)matrixtree).Bidireccional(validRoutes);
+                switch (option) {
+                    case Constants.AMPLITUD:
+                        matrixtree = new Board(initialState, finalState);
+                        try {
+                            ((Board)matrixtree).Amplitud(validRoutes);
+                        } catch (TooManyStatesException e){}
+                        break;
+                    case Constants.PROFUNDIDAD:
+                        matrixtree = new Board(initialState, finalState);
+                        try {
+                            ((Board)matrixtree).Profundidad(validRoutes);
+                        } catch (TooManyStatesException e){}
+                        break;
+                    case Constants.BIDIRECCIONAL:
+                        matrixtree = new DoubleBoard(initialState, finalState);
+                        try {
+                            ((DoubleBoard)matrixtree).Bidireccional(validRoutes);
+                        } catch (TooManyStatesException e) {}
+                        break;
+                    default:
+                        break;
                 }
 
                 bestRoute = Board.getBestRoute(validRoutes);

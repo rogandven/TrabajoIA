@@ -84,9 +84,9 @@ public class Input {
         HashSet<Integer> numbers = new HashSet<>();
         int max = matrixSize * matrixSize;
         int min = 1;
-        Random r = new Random((long)(Math.random() * 2763));
+        // Random r = new Random((long)(Math.random() * 2763));
         while (numbers.size() < ((matrixSize * matrixSize) - 1)) {
-            numbers.add(r.nextInt(max - min + 1) + min);
+            numbers.add((int)((Math.random() * max) + min));
         }
         numbers.add(0);
         List<Object> numbers2 = Arrays.asList(numbers.toArray());
